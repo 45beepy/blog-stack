@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/media/sonicknucklesss/nowhere/Projectss/blog-stack/backend/BlogApi.csproj": {}
+    "/home/sonicknucklesss/Projects/blog-stack/backend/BlogApi.csproj": {}
   },
   "projects": {
-    "/media/sonicknucklesss/nowhere/Projectss/blog-stack/backend/BlogApi.csproj": {
+    "/home/sonicknucklesss/Projects/blog-stack/backend/BlogApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/media/sonicknucklesss/nowhere/Projectss/blog-stack/backend/BlogApi.csproj",
+        "projectUniqueName": "/home/sonicknucklesss/Projects/blog-stack/backend/BlogApi.csproj",
         "projectName": "BlogApi",
-        "projectPath": "/media/sonicknucklesss/nowhere/Projectss/blog-stack/backend/BlogApi.csproj",
+        "projectPath": "/home/sonicknucklesss/Projects/blog-stack/backend/BlogApi.csproj",
         "packagesPath": "/home/sonicknucklesss/.nuget/packages/",
-        "outputPath": "/media/sonicknucklesss/nowhere/Projectss/blog-stack/backend/obj/",
+        "outputPath": "/home/sonicknucklesss/Projects/blog-stack/backend/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/home/sonicknucklesss/.nuget/NuGet/NuGet.Config"
@@ -43,6 +43,12 @@
       "frameworks": {
         "net10.0": {
           "targetAlias": "net10.0",
+          "dependencies": {
+            "Libsql.Client": {
+              "target": "Package",
+              "version": "[0.5.1, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "U+owdKcJL+o=",
+  "dgSpecHash": "Hu3X8CVS5zo=",
   "success": true,
-  "projectFilePath": "/media/sonicknucklesss/nowhere/Projectss/blog-stack/backend/BlogApi.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "/home/sonicknucklesss/Projects/blog-stack/backend/BlogApi.csproj",
+  "expectedPackageFiles": [
+    "/home/sonicknucklesss/.nuget/packages/libsql.client/0.5.1/libsql.client.0.5.1.nupkg.sha512"
+  ],
   "logs": []
 }
