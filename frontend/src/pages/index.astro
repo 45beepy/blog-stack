@@ -9,22 +9,89 @@ const posts = await response.json();
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <title>My Ultra-Light Blog</title>
-    <style>
-      body { font-family: system-ui, sans-serif; max-width: 800px; margin: 0 auto; padding: 2rem; }
-      .post { border-bottom: 1px solid #ccc; padding-bottom: 1rem; margin-bottom: 1rem; }
-    </style>
   </head>
   <body>
-    <h1>My Zero-JS Blog</h1>
-    
-    <div class="post-list">
-      {/* Astro uses JSX-like syntax to map over the array we fetched above */}
+    <header>
+      <h1>My Zero-JS Blog</h1>
+      <p>Lightning fast. Zero bloat.</p>
+    </header>
+
+    <main>
       {posts.map((post) => (
         <article class="post">
           <h2>{post.title}</h2>
           <p>{post.content}</p>
         </article>
       ))}
-    </div>
+    </main>
   </body>
 </html>
+
+<style>
+  /* 1. Define some clean, modern colors */
+  :root {
+    --bg-color: #fafafa;
+    --text-color: #1a1a1a;
+    --accent-color: #2563eb;
+    --card-bg: #ffffff;
+    --border-color: #e5e7eb;
+  }
+
+  /* 2. Setup the main body container */
+  body {
+    font-family: system-ui, -apple-system, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+    line-height: 1.6;
+  }
+
+  /* 3. Style the header area */
+  header {
+    margin-bottom: 3rem;
+    border-bottom: 3px solid var(--accent-color);
+    padding-bottom: 1rem;
+  }
+
+  h1 {
+    margin: 0 0 0.5rem 0;
+    font-size: 2.5rem;
+    letter-spacing: -0.05rem;
+  }
+
+  header p {
+    margin: 0;
+    color: #666;
+    font-size: 1.1rem;
+  }
+
+  /* 4. Style the individual blog post cards */
+  .post {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  /* Add a subtle hover effect */
+  .post:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .post h2 {
+    margin-top: 0;
+    color: var(--accent-color);
+    font-size: 1.5rem;
+  }
+
+  .post p {
+    margin-bottom: 0;
+    color: #444;
+  }
+</style>
