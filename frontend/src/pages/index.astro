@@ -1,8 +1,9 @@
 ---
-// 1. FRONTMATTER: This code runs on the server.
-// It reaches out to your .NET Minimal API to grab the data.
-const response = await fetch("http://localhost:5276/api/posts");
+/---
+// Change this line to use your real Render URL
+const response = await fetch("https://blog-api-grud.onrender.com/api/posts");
 const posts = await response.json();
+---
 ---
 
 <html lang="en">
