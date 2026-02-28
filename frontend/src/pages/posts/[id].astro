@@ -1,49 +1,53 @@
 ---
-// 1. Import the marked library
 import { marked } from 'marked';
 
-// Fetch your live Render API
-const response = await fetch("https://blog-api-grud.onrender.com/api/posts");
-const posts = await response.json();
+// The "export" keyword right here is what fixes the build error!
+export async function getStaticPaths() {
+  const response = await fetch("https://blog-api-grud.onrender.com/api/posts");
+  const posts = await response.json();
+
+  return posts.map((post) => {
+    return {
+      params: { id: post.id.toString() },
+      props: { post },
+    };
+  });
+}
+
+const { post } = Astro.props;
+
+// Parse the raw database text into formatted HTML
+const parsedContent = marked.parse(post.content);
 ---
 
 <html lang="en">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
-    <title>My Ultra-Light Blog</title>
+    <title>{post.title} | My Zero-JS Blog</title>
   </head>
   <body>
-    <header>
-      <h1>My Zero-JS Blog</h1>
-      <p>Lightning fast. Zero bloat.</p>
-    </header>
-
     <main>
-      {posts.map((post) => (
-        <article class="post">
-          <a href={`/posts/${post.id}`}>
-            <h2>{post.title}</h2>
-          </a>
-          
-          {/* Parse the content and add a class so we can style the links inside it */}
-          <div class="markdown-preview" set:html={marked.parse(post.content)}></div>
-          
-        </article>
-      ))}
+      <a href="/" class="back-link">&larr; Back to Home</a>
+      
+      <article class="post-content">
+        <h1>{post.title}</h1>
+        
+        {/* We use set:html to inject the parsed Markdown safely */}
+        <div set:html={parsedContent}></div>
+        
+      </article>
     </main>
   </body>
 </html>
 
 <style>
+  /* Bring over our dark terminal theme */
   :root {
     --bg-color: #0f111a;
     --text-color: #8f93a2;
     --heading-color: #fffffe;
     --accent-color: #c792ea;
-    --card-bg: #1a1c23;
-    --border-color: #292d3e;
-    --glow: 0 0 10px rgba(199, 146, 234, 0.2);
   }
 
   body {
@@ -56,56 +60,24 @@ const posts = await response.json();
     line-height: 1.7;
   }
 
-  header {
-    margin-bottom: 4rem;
-    border-bottom: 2px dashed var(--border-color);
-    padding-bottom: 2rem;
+  .back-link {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-size: 1.1rem;
+    display: inline-block;
+    margin-bottom: 2rem;
+    border-bottom: 1px dashed transparent;
+    transition: border-color 0.2s;
+  }
+
+  .back-link:hover {
+    border-color: var(--accent-color);
   }
 
   h1 {
     color: var(--heading-color);
-    font-size: 3rem;
-    margin: 0 0 0.5rem 0;
-    text-transform: lowercase;
-    text-shadow: var(--glow);
-  }
-
-  header p {
-    color: var(--accent-color);
-    margin: 0;
-    font-size: 1.2rem;
-  }
-
-  /* Homepage Card Styles */
-  .post {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-left: 4px solid var(--accent-color);
-    padding: 2rem;
-    margin-bottom: 2rem;
-    border-radius: 4px;
-    transition: all 0.3s ease;
-  }
-
-  .post:hover {
-    transform: translateX(10px);
-    border-color: var(--accent-color);
-    box-shadow: var(--glow);
-  }
-
-  .post a {
-    text-decoration: none;
-  }
-
-  .post h2 {
-    color: var(--heading-color);
-    margin-top: 0;
-    font-size: 1.8rem;
-    transition: color 0.2s;
-  }
-  
-  .post a:hover h2 {
-    color: var(--accent-color);
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
   }
 
   /* Style the injected Markdown tags */
@@ -127,17 +99,18 @@ const posts = await response.json();
     font-size: 0.9em;
   }
 
+  /* Prevent double-backgrounds on code blocks */
   :global(pre code) {
     background-color: transparent;
     padding: 0;
   }
-
-  :global(.markdown-preview a) {
+  
+  :global(.post-content a) {
     color: var(--accent-color);
     text-decoration: none;
   }
   
-  :global(.markdown-preview a:hover) {
+  :global(.post-content a:hover) {
     text-decoration: underline;
   }
 </style>
