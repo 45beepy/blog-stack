@@ -34,4 +34,24 @@ app.MapGet("/api/posts", async () =>
     return Results.Ok(posts);
 });
 
+// 1. Remove IDatabaseClient db from the parentheses here
+app.MapPost("/api/posts", async (CreatePostRequest req) =>
+{
+    // Basic validation
+    if (string.IsNullOrWhiteSpace(req.Title) || string.IsNullOrWhiteSpace(req.Content))
+    {
+        return Results.BadRequest(new { error = "Title and Content are required." });
+    }
+
+    // Notice we are using dbClient here to match line 11!
+    await dbClient.Execute(
+        "INSERT INTO Posts (Title, Content) VALUES (?, ?)",
+        req.Title,
+        req.Content
+    );
+
+    return Results.Ok(new { message = "Post published successfully!" });
+});
 app.Run();
+
+public record CreatePostRequest(string Title, string Content);
