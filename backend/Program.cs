@@ -89,45 +89,5 @@ app.MapPost("/api/posts", async (CreatePostRequest req, IConfiguration config, H
 
 app.Run();
 
-public record CreatePostRequest(string Title, string Content);
-    // --- SECURITY CHECK ---
-    // Grab the expected API key from our environment secrets
-    var expectedApiKey = config["AdminApiKey"];
-    
-    // Check if the request has an "X-API-Key" header, and if it matches our secret
-    if (!request.Headers.TryGetValue("X-API-Key", out var extractedApiKey) || extractedApiKey != expectedApiKey)
-    {
-        return Results.Unauthorized(); // Kicks them out immediately with a 401 error
-    }
-    // ----------------------
-
-    // Basic validation
-    if (string.IsNullOrWhiteSpace(req.Title) || string.IsNullOrWhiteSpace(req.Content))
-    {
-        return Results.BadRequest(new { error = "Title and Content are required." });
-    }
-
-    // Insert into Turso
-    await dbClient.Execute(
-        "INSERT INTO Posts (Title, Content) VALUES (?, ?)",
-        req.Title,
-        req.Content
-    );
-
-    // Give Turso 2 seconds to sync globally before triggering the build
-    await Task.Delay(2000);
-
-    // Trigger the Cloudflare Webhook
-    var webhookUrl = config["Cloudflare:WebhookUrl"] ?? config["Cloudflare__WebhookUrl"];
-    if (!string.IsNullOrWhiteSpace(webhookUrl))
-    {
-        using var http = new HttpClient();
-        await http.PostAsync(webhookUrl, new StringContent("")); 
-    }
-
-    return Results.Ok(new { message = "Post published and site rebuilding!" });
-});
-
-app.Run();
-
+// Type declarations MUST sit at the very end of the file!
 public record CreatePostRequest(string Title, string Content);
