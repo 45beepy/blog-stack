@@ -127,4 +127,28 @@ const posts = await response.json();
   .read-more:hover {
     border-color: var(--accent-color);
   }
+
+  /* Mobile Optimization */
+  @media (max-width: 600px) {
+    body {
+      padding: 1.2rem;
+    }
+    header {
+      margin-bottom: 2rem;
+      padding-bottom: 1rem;
+    }
+    h1 {
+      font-size: 2.2rem;
+    }
+    header p {
+      font-size: 1rem;
+    }
+    .post {
+      padding: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+    .post h2 {
+      font-size: 1.5rem;
+    }
+  }
 </style>

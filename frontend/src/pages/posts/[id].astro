@@ -108,4 +108,24 @@ const parsedContent = marked.parse(post.content);
   :global(.post-content a:hover) {
     text-decoration: underline;
   }
+
+  /* Mobile Optimization */
+  @media (max-width: 600px) {
+    body {
+      padding: 1.2rem;
+    }
+    .back-link {
+      margin-bottom: 1.5rem;
+      font-size: 1rem;
+    }
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+    :global(pre) {
+      padding: 0.8rem;
+      font-size: 0.85rem;
+      margin: 1rem 0;
+    }
+  }
 </style>
