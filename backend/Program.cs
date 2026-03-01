@@ -34,9 +34,20 @@ app.MapGet("/api/posts", async () =>
     return Results.Ok(posts);
 });
 
-// 4. The POST endpoint (now with config injected, delay, and webhook)
-app.MapPost("/api/posts", async (CreatePostRequest req, IConfiguration config) =>
+// 4. The POST endpoint (Now Secured!)
+app.MapPost("/api/posts", async (CreatePostRequest req, IConfiguration config, HttpRequest request) =>
 {
+    // --- SECURITY CHECK ---
+    // Grab the expected API key from our environment secrets
+    var expectedApiKey = config["AdminApiKey"];
+    
+    // Check if the request has an "X-API-Key" header, and if it matches our secret
+    if (!request.Headers.TryGetValue("X-API-Key", out var extractedApiKey) || extractedApiKey != expectedApiKey)
+    {
+        return Results.Unauthorized(); // Kicks them out immediately with a 401 error
+    }
+    // ----------------------
+
     // Basic validation
     if (string.IsNullOrWhiteSpace(req.Title) || string.IsNullOrWhiteSpace(req.Content))
     {
@@ -50,16 +61,14 @@ app.MapPost("/api/posts", async (CreatePostRequest req, IConfiguration config) =
         req.Content
     );
 
-    // THE FIX: Give Turso 2 seconds to sync globally before triggering the build
+    // Give Turso 2 seconds to sync globally before triggering the build
     await Task.Delay(2000);
 
-    // Trigger the Cloudflare Webhook to rebuild the Astro site
-    // We check both the standard colon format and Render's double-underscore format
+    // Trigger the Cloudflare Webhook
     var webhookUrl = config["Cloudflare:WebhookUrl"] ?? config["Cloudflare__WebhookUrl"];
     if (!string.IsNullOrWhiteSpace(webhookUrl))
     {
         using var http = new HttpClient();
-        // Send an empty StringContent to avoid "null body" server rejections
         await http.PostAsync(webhookUrl, new StringContent("")); 
     }
 
