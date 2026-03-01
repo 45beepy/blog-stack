@@ -34,8 +34,8 @@ app.MapGet("/api/posts", async () =>
     return Results.Ok(posts);
 });
 
-// 1. Remove IDatabaseClient db from the parentheses here
-app.MapPost("/api/posts", async (CreatePostRequest req) =>
+// 4. The POST endpoint (now with config injected, delay, and webhook)
+app.MapPost("/api/posts", async (CreatePostRequest req, IConfiguration config) =>
 {
     // Basic validation
     if (string.IsNullOrWhiteSpace(req.Title) || string.IsNullOrWhiteSpace(req.Content))
@@ -43,15 +43,29 @@ app.MapPost("/api/posts", async (CreatePostRequest req) =>
         return Results.BadRequest(new { error = "Title and Content are required." });
     }
 
-    // Notice we are using dbClient here to match line 11!
+    // Insert into Turso
     await dbClient.Execute(
         "INSERT INTO Posts (Title, Content) VALUES (?, ?)",
         req.Title,
         req.Content
     );
 
-    return Results.Ok(new { message = "Post published successfully!" });
+    // THE FIX: Give Turso 2 seconds to sync globally before triggering the build
+    await Task.Delay(2000);
+
+    // Trigger the Cloudflare Webhook to rebuild the Astro site
+    // We check both the standard colon format and Render's double-underscore format
+    var webhookUrl = config["Cloudflare:WebhookUrl"] ?? config["Cloudflare__WebhookUrl"];
+    if (!string.IsNullOrWhiteSpace(webhookUrl))
+    {
+        using var http = new HttpClient();
+        // Send an empty StringContent to avoid "null body" server rejections
+        await http.PostAsync(webhookUrl, new StringContent("")); 
+    }
+
+    return Results.Ok(new { message = "Post published and site rebuilding!" });
 });
+
 app.Run();
 
 public record CreatePostRequest(string Title, string Content);
